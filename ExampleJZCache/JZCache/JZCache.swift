@@ -15,6 +15,10 @@ class JZCache
     var lastUpdate: Dictionary<String, NSDate> = Dictionary<String, NSDate>()
     var maxTime: NSTimeInterval?
 
+    //
+    // public methods
+    //
+    
     init(){
         self.maxTime = NSTimeInterval(300)
     }
@@ -43,6 +47,25 @@ class JZCache
         
         return result
     }
+    
+    func clearCache()
+    {
+        alternativeStore.removeAll(keepCapacity: false)
+        lastUpdate.removeAll(keepCapacity: false)
+    }
+    
+    func clearInvalidCache()
+    {
+        for (key, _) in alternativeStore {
+            if (self.shouldInvalidate(key)){
+                self.removeObjectForKey(key)
+            }
+        }
+    }
+    
+    //
+    // private methods
+    //
     
     func createKey<T, S> (function: (T -> S), params: T ) -> String {
         println("Key: " + toString(params))
@@ -74,6 +97,12 @@ class JZCache
     func read(key: String) -> (Any?, Bool)
     {
         return (alternativeStore[key], shouldInvalidate(key))
+    }
+    
+    func removeObjectForKey(key:String)
+    {
+        alternativeStore.removeValueForKey(key)
+        lastUpdate.removeValueForKey(key)
     }
     
     // some problems with casting type S to AnyObject and calling the NSCache methods
