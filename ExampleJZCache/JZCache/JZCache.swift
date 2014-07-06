@@ -27,12 +27,13 @@ class JZCache
         self.maxTime = invalidateAfter
     }
     
+    
+    /**
+    Run passed function with given parameters and cache results
+    */
     func cache <T, S> (function: (T -> S), params: T ) -> S {
         let key:String = self.createKey(function, params: params)
         
-        // read
-//        let cachedValue = self.read(key)
-        // alternative
         let stored: (cachedValue: Any?, shouldInvalidate: Bool) = read(key)
         if stored.cachedValue != nil && stored.shouldInvalidate == false
         {

@@ -12,16 +12,18 @@ class ViewController: UIViewController {
     
     // sample function operates on Ints
     func intfunc (a: Int, b: Int) -> Int{
-        sleep(1)
+        sleep(1) // very expensive operation
         return a+b
     }
     
     // sample function operates on Strings
     func stringfunc (a: String, b: String, c:String) -> String{
+        sleep(1) // very expensive operation
         return a+b+c
     }
    
     func makeIncrementor(forIncrement amount: Int) -> () -> Int {
+        sleep(1) // very expensive operation
         var runningTotal = 0
         func incrementor() -> Int {
             runningTotal += amount
@@ -34,12 +36,33 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        // some examples
+        //
+        // EXAMPLE
+        //
+        
+        // initialize
         let cache = JZCache()
-        let result = cache.cache (intfunc, params: (3, 5))
-        let bresult = cache.cache (stringfunc, params: ("aaa", "bbb", "ccc"))
-        let cresult = cache.cache (makeIncrementor, params: 3)
-        let result2 = cache.cache (intfunc, params: (3, 5))
+
+        // instead of:
+//      let result = intfunc(3, b: 5)
+        // do:
+        let result = cache.cache (intfunc, params: (3, b: 5))
+        
+        // instead of:
+//      let result2 = stringfunc("aaa", b: "bbb", c: "ccc")
+        // do:
+        
+        let result2 = cache.cache (stringfunc, params: ("aaa", b: "bbb", c: "ccc"))
+        // instead of:
+        //      let result2 = stringfunc("aaa", b: "bbb", c: "ccc")
+        // do:
+        let result3 = cache.cache (makeIncrementor, params: 3)
+        
+        let result4 = cache.cache (intfunc, params: (3, 5))
+        
+        cache.clearCache() // remove all values
+        cache.clearInvalidCache() // remove old values
+        
     }
 
     override func didReceiveMemoryWarning() {
